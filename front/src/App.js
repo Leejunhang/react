@@ -1,10 +1,9 @@
 import './App.css';
-import Address from './components/ex01/Address';
-
+import Posts from './components/ex01/Posts';
 const App = () =>{
     return (
         <div className="App">
-            <Address/>
+            <Posts/>
         </div>
     );
 }

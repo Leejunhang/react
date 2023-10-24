@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-const Insert = () => {
+const Insert = ({onInsert}) => {
     const [form, setForm] = useState({
         id: 5,
         name: "무기명",
@@ -8,13 +8,17 @@ const Insert = () => {
     });
 
     const {id, name, address} = form;
-    const onInsert=(e)=>{
+    const onSubmit=(e)=>{
         e.preventDefault();
         if(window.confirm('등록하실래요?')){
-            console.log(form);
+            onInsert(form);
+            setForm({
+                id: id+1,
+                name: '',
+                address: ''
+            })
         }
     }
-
     const onChange = (e) => {
         setForm({
             ...form,
@@ -24,7 +28,8 @@ const Insert = () => {
     return (
         <div>
             <h1>주소 등록</h1>
-            <form onSubmit={(e)=>onInsert(e)}>
+            <form onSubmit={(e)=>onSubmit(e)}>
+                <h3>아이디: {id}</h3>
                 <input value={name} name="name" onChange={(e)=>onChange(e)}/>
                 {name}
                 <hr />
