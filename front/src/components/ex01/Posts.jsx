@@ -51,7 +51,7 @@ const Posts = () => {
                             <td>{post.id}</td>
                             <td>
                                 <div onClick={()=>onClickTitle(post.id)} 
-                                    style={{color:'navy',cursor:'pointer'}}>{post.title}</div>
+                                    style={{color:'#0969DA',cursor:'pointer'}}>{post.title}</div>
                                 {post.show && <div>{post.body}</div>}
                             </td>
                         </tr>
