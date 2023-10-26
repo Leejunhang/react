@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import {Table, Button, InputGroup, Form, Row, Col} from 'react-bootstrap'
 
@@ -9,6 +9,7 @@ const BlogSearch = () => {
     const [total, setTotal] = useState(0);
     const [end, setEnd] = useState(false);
     const [cnt, setCnt] = useState(0);
+    const ref_query = useRef(null);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -48,7 +49,9 @@ const BlogSearch = () => {
 
     const onSubmit = (e) =>{
         e.preventDefault();
-        navigate(`/blog?page=1&query=${query}`);
+        if(query=="")
+            alert("검색어를 입력하세요!");
+            ref_query.current.focus();
     }
 
     const onClick = (url) => {
@@ -75,7 +78,8 @@ const BlogSearch = () => {
                         <Col md={4}>
                             <form onSubmit={onSubmit}>
                                 <InputGroup>
-                                    <Form.Control value={query} onChange={(e)=>setQuery(e.target.value)}/>
+                                    <Form.Control ref={ref_query} 
+                                    value={query} onChange={(e)=>setQuery(e.target.value)}/>
                                     <Button type="submit">검색</Button>
                                 </InputGroup>
                             </form>
