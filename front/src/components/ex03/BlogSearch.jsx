@@ -8,6 +8,7 @@ const BlogSearch = () => {
     const [blogs, setBlogs] = useState([]);
     const [total, setTotal] = useState(0);
     const [end, setEnd] = useState(false);
+    const [cnt, setCnt] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,7 +27,9 @@ const BlogSearch = () => {
         setLoading(true);
         const res=await axios(`${url}page=${page}&query=${query}`, config);
         //console.log(res.data);
-        setBlogs(res.data.documents);
+        let data=res.data.documents;
+        data = data.map(blog=>blog && {...blog, show:false, checked:false});
+        setBlogs(data);
         setEnd(res.data.meta.is_end);
         setTotal(res.data.meta.pageable_count);
         setLoading(false);
@@ -36,11 +39,31 @@ const BlogSearch = () => {
         getBlogs();
     },[location]);
 
+    useEffect(()=>{
+        let cnt=0;
+        blogs.forEach(blog=>blog.checked && cnt++);
+        console.log(cnt);
+        setCnt(cnt);
+    }, [blogs]);
+
     const onSubmit = (e) =>{
         e.preventDefault();
         navigate(`/blog?page=1&query=${query}`);
     }
-     
+
+    const onClick = (url) => {
+        let data=blogs.map(blog=>blog.url === url ? {...blog,show:!blog.show} : blog);
+        setBlogs(data);
+    }
+    const onChangeAll =(e) => {
+        let data=blogs.map(blog=>blog && {...blog, checked:e.target.checked});
+        setBlogs(data);
+    }
+
+    const onChangeSingle = (e, url) => {
+        let data = blogs.map(blog=>blog.url === url ? {...blog, checked:e.target.checked} : blog);
+        setBlogs(data);
+    }
     return (
         <div className='my-5'>
             <h1 className='text-center mb-5'>블로그 검색</h1>
@@ -63,15 +86,25 @@ const BlogSearch = () => {
                     <Table striped hover> 
                         <thead>
                             <tr>
+                                <th><input checked={cnt==blogs.length}
+                                    type="checkbox" onChange={onChangeAll}/></th>
                                 <th>블로그 이름</th>
                                 <th>제목</th>
                             </tr>
                         </thead>
                         <tbody>
-                        {blogs.map(blog=>
+                        {blogs.map((blog, index)=>
                             <tr key={blog.url}>
-                                <td>{blog.blogname}</td>
-                                <td><div dangerouslySetInnerHTML={{__html: blog.title}}></div></td>
+                                <td><input onChange={(e)=>onChangeSingle(e, blog.url)} 
+                                    type="checkbox" checked={blog.checked}/></td>
+                                <td><a href={blog.url}>{blog.blogname}</a></td>
+                                <td>
+                                    <div onClick={()=>onClick(blog.url)}
+                                         dangerouslySetInnerHTML={{__html: blog.title}} style={{cursor:'pointer', color:'blue'}}></div>
+                                    {blog.show &&
+                                        <div dangerouslySetInnerHTML={{__html: blog.contents}}></div>
+                                    }
+                                </td>
                             </tr>
                         )}
                         </tbody>
