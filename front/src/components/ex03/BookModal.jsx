@@ -48,4 +48,4 @@ const BookModal = ({book}) => {
     );
 }
 
-export default BookModal
+export default BookModal;
