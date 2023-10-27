@@ -18,7 +18,7 @@ router.get('/list.json', function(req, res){ //localhost:5000/books/list.json?qu
     });
 });
 
-//도서 등록
+//도서등록
 router.post('/insert', function(req, res){
     const title=req.body.title;
     const price=req.body.price;
@@ -29,15 +29,30 @@ router.post('/insert', function(req, res){
     const isbn=req.body.isbn;
     let sql='select * from books where isbn=?';
     db.get().query(sql, [isbn], function(err, rows){
+        if(err) console.log('err1............', err);
         if(rows.length > 0) {
             res.send('1');
         }else{
             sql='insert into books(title,price,authors,contents,publisher,image,isbn) values(?,?,?,?,?,?,?)';
             db.get().query(sql, [title,price,authors,contents,publisher,image,isbn], function(err){
-                if(err) console.log('err2........', err);
-                res.send("0");
+                if(err) console.log('err2................', err);
+                res.send('0');
             });
         }
     });
 });
+
+//도서삭제
+router.post('/delete', function(req, res){
+    const bid = req.body.bid;
+    const sql='delete from books where bid=?';
+    db.get().query(sql, [bid], function(err){
+        if(err){
+            res.send('0');
+        }else{
+            res.send('1');
+        }
+    })
+});
+
 module.exports = router;
