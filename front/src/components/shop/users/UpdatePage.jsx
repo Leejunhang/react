@@ -4,8 +4,10 @@ import { InputGroup, Form, Button, Row, Col } from 'react-bootstrap';
 import InputGroupText from 'react-bootstrap/esm/InputGroupText';
 import {Spinner} from 'react-bootstrap';
 import ModalPostCode from './ModalPostCode';
+import { useNavigate } from 'react-router-dom';
 
 const UpdatePage = () => {
+    const navi = useNavigate();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState({  //여러 명이면 대괄호, 한 사람 여러 정보는 중괄호
         uid:'',
@@ -15,9 +17,10 @@ const UpdatePage = () => {
         phone:'',
         address1:'',
         address2:'',
-        fmtdate:''
+        fmtdate:'',
+        fmtmodi:''
     });
-    const {uid, upass, uname, photo, phone, address1, address2, fmtdate} = user;
+    const {uid, upass, uname, photo, phone, address1, address2, fmtdate, fmtmodi} = user;
     const getUser = async() =>{
         setLoading(true);
         const res=await axios.get(`/users/read/${sessionStorage.getItem("uid")}`);
@@ -35,6 +38,18 @@ const UpdatePage = () => {
             [e.target.name]:e.target.value
         })
     }
+    const onUpdate = async(e) => {
+        e.preventDefault();
+        if(window.confirm('정보를 수정하실래요?')){
+            const res=await axios.post('/users/update', user);
+            if(res.data==1){
+                alert("정보가 수정되었습니다.");
+                navi('/users/mypage');
+            }else{
+                alert("정보수정이 실패했습니다!");
+            }
+        }
+    }
     if(loading) return <div className='text-center my-5'><Spinner variant='primary'/></div>
 
     return (
@@ -42,7 +57,7 @@ const UpdatePage = () => {
             <h1 className='text-center mb-5'>정보수정 페이지</h1>
             <Row className='justify-content-center'>
                 <Col md={8}>
-                    <form>
+                    <form onSubmit={onUpdate}>
                         <InputGroup className='mb-2'>
                             <InputGroup.Text>이름</InputGroup.Text>
                             <Form.Control value={uname} name="uname" onChange={onChange}/>
@@ -58,8 +73,8 @@ const UpdatePage = () => {
                         </InputGroup>
                         <Form.Control placeholder='상세주소' value={address2} name="address2" onChange={onChange}/>
                         <div className='text-center my-3'>
-                            <Button className='me-2'>저장</Button>
-                            <Button variant='secondary'>취소</Button>
+                            <Button className='me-2' type='submit'>저장</Button>
+                            <Button variant='secondary' onClick={()=>getUser()}>취소</Button>
                         </div>
                     </form>
                 </Col>

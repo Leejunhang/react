@@ -30,9 +30,27 @@ router.post('/login', function (req, res) {
 //(마이페이지) 보통 아이디나 비밀번호는 쿼리가 아닌 파라미터 값으로 받아온다. params 사용.
 router.get('/read/:uid', function(req,res){	//localhost:5000/users/read/blue
 	const uid=req.params.uid;
-	const sql='select *,date_format(regdate, "%Y년-%m월-%d일 %T") fmtdate from users where uid=?';
+	const sql='select *,date_format(regdate, "%Y년-%m월-%d일 %T") fmtdate, date_format(modidate, "%Y년-%m월-%d일 %T") fmtmodi from users where uid=?';
 	db.get().query(sql, [uid], function(err, rows){
 		res.send(rows[0])
 	})
+});
+
+//사용자 정보 수정
+router.post('/update', function(req, res){
+	const uname=req.body.uname;
+	const phone=req.body.phone;
+	const address1=req.body.address1;
+	const address2=req.body.address2;
+	const uid=req.body.uid;
+	const sql='update users set uname=?, phone=?, address1=?, address2=?, modidate=now() where uid=?';
+	//console.log(uname, phone, address1, address2, uid)
+	db.get().query(sql,[uname, phone, address1, address2, uid], function(err){
+		if(err) {
+			res.send('0');
+		}else{
+			res.send('1');
+		}
+	});
 });
 module.exports = router;

@@ -1,26 +1,31 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Spinner, Row, Col, Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 const MyPage = () => {
     const navi = useNavigate();
+    const ref_file = useRef(null);
     const [loading, setLoading] = useState(false);
+    const [photo, setphto] = useState("https://via.placeholder.com/200x200");
     const [user, setUser] = useState({  //여러 명이면 대괄호, 한 사람 여러 정보는 중괄호
         uid:'',
         upass:'',
         uname:'',
-        photo:'',
         phone:'',
         address1:'',
         address2:'',
         fmtdate:''
     });
-    const {uid, upass, uname, photo, phone, address1, address2, fmtdate} = user;
+    const {uid, upass, uname, phone, address1, address2, fmtdate} = user;
     const getUser = async() =>{
         setLoading(true);
         const res=await axios.get(`/users/read/${sessionStorage.getItem("uid")}`);
         setUser(res.data);
         setLoading(false);
+    }
+
+    const onChangeFile = (e) => {
+        setphto(URL.createObjectURL(e.target.files[0]));
     }
 
     useEffect(()=>{
@@ -35,7 +40,9 @@ const MyPage = () => {
                 <Col md={6}>
                     <Card className='p-5'>
                         <div>
-                            {photo || <img src="http://via.placeholder.com/200x200" width="100%" className='photo'/>}
+                            <img src= {photo} onClick={()=>ref_file.current.click()}
+                                width="100%" className='photo' style={{cursor:'pointer'}}/>
+                            <input type="file" ref={ref_file} onChange={onChangeFile} style={{display:'none'}}/>
                             <br/>
                             <Button size='sm mt-2' variant='success'>이미지 수정</Button>
                             <hr/>
@@ -47,6 +54,7 @@ const MyPage = () => {
                             <div>주소1: {address1}</div>
                             <div>주소2: {address2}</div>
                             <div>가입일: {fmtdate}</div>
+                            <div>수정일: {fmtdate}</div>
                             <hr/>
                             <Button size="sm" onClick={()=>navi('/users/update')}>정보수정</Button>
                         </div>
