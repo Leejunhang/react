@@ -53,7 +53,7 @@ const UpdatePage = () => {
                         </InputGroup>
                         <InputGroup className='mb-2'>
                             <InputGroup.Text>주소</InputGroup.Text>
-                            <Form.Control value={address1} name="address1"/>
+                            <Form.Control value={address1} name="address1" onChange={onChange} readOnly/>
                             <ModalPostCode user={user} setUser={setUser}/>
                         </InputGroup>
                         <Form.Control placeholder='상세주소' value={address2} name="address2" onChange={onChange}/>
