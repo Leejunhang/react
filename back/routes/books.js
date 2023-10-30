@@ -31,12 +31,12 @@ router.post('/insert', function(req, res){
     db.get().query(sql, [isbn], function(err, rows){
         if(err) console.log('err1............', err);
         if(rows.length > 0) {
-            res.send('1');
+            res.send('1');  //INSERT 실패
         }else{
             sql='insert into books(title,price,authors,contents,publisher,image,isbn) values(?,?,?,?,?,?,?)';
             db.get().query(sql, [title,price,authors,contents,publisher,image,isbn], function(err){
                 if(err) console.log('err2................', err);
-                res.send('0');
+                res.send('0');  //INSERT 완료
             });
         }
     });
@@ -48,9 +48,9 @@ router.post('/delete', function(req, res){
     const sql='delete from books where bid=?';
     db.get().query(sql, [bid], function(err){
         if(err){
-            res.send('0');
+            res.send('0');  //지워짐
         }else{
-            res.send('1');
+            res.send('1');  //못지워짐
         }
     })
 });
