@@ -26,4 +26,13 @@ router.post('/login', function (req, res) {
 	});
 });
 
+//사용자 정보 읽기 REST API
+//(마이페이지) 보통 아이디나 비밀번호는 쿼리가 아닌 파라미터 값으로 받아온다. params 사용.
+router.get('/read/:uid', function(req,res){	//localhost:5000/users/read/blue
+	const uid=req.params.uid;
+	const sql='select *,date_format(regdate, "%Y년-%m월-%d일 %T") fmtdate from users where uid=?';
+	db.get().query(sql, [uid], function(err, rows){
+		res.send(rows[0])
+	})
+});
 module.exports = router;
