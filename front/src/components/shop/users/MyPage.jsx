@@ -6,7 +6,6 @@ const MyPage = () => {
     const navi = useNavigate();
     const ref_file = useRef(null);
     const [loading, setLoading] = useState(false);
-    const [photo, setphto] = useState("https://via.placeholder.com/200x200");
     const [user, setUser] = useState({  //여러 명이면 대괄호, 한 사람 여러 정보는 중괄호
         uid:'',
         upass:'',
@@ -14,9 +13,11 @@ const MyPage = () => {
         phone:'',
         address1:'',
         address2:'',
-        fmtdate:''
+        fmtdate:'',
+        fmtmodi:'',
+        file:null
     });
-    const {uid, upass, uname, phone, address1, address2, fmtdate} = user;
+    const {uid, upass, uname, phone, address1, address2, fmtdate, fmtmodi, photo, file} = user;
     const getUser = async() =>{
         setLoading(true);
         const res=await axios.get(`/users/read/${sessionStorage.getItem("uid")}`);
@@ -25,7 +26,26 @@ const MyPage = () => {
     }
 
     const onChangeFile = (e) => {
-        setphto(URL.createObjectURL(e.target.files[0]));
+        setUser({
+            ...user,
+            photo:URL.createObjectURL(e.target.files[0]),
+            file: e.target.files[0]
+        })
+    }
+
+    const onUpdatePhoto = async() => {
+        if(!file) {
+            alert('수정할 사진을  선택해 주세요!');
+        }else{
+            if(window.confirm("번경된 사진을 저장하실래요?")){
+                //사진 저장
+                const formData=new FormData();
+                formData.append('file', file);
+                formData.append('uid', uid);
+                await axios.post('/users/update/photo', formData);
+                alert("사진이 변경되었습니다!")
+            }
+        }
     }
 
     useEffect(()=>{
@@ -40,11 +60,11 @@ const MyPage = () => {
                 <Col md={6}>
                     <Card className='p-5'>
                         <div>
-                            <img src= {photo} onClick={()=>ref_file.current.click()}
-                                width="100%" className='photo' style={{cursor:'pointer'}}/>
-                            <input type="file" ref={ref_file} onChange={onChangeFile} style={{display:'none'}}/>
+                            <img onClick={()=>ref_file.current.click()}
+                                 src= {photo||"https://via.placeholder.com/200x200"} width="100%" className='photo'/>
+                            <input type='file' ref={ref_file} onChange={onChangeFile} style={{display:'none'}}/>
                             <br/>
-                            <Button size='sm mt-2' variant='success'>이미지 수정</Button>
+                            <Button size='sm mt-2' onClick={onUpdatePhoto}  variant='success'>이미지 수정</Button>
                             <hr/>
                         </div>
                         <div>

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Spinner, Table, Row, Col, InputGroup, Form, Button } from 'react-bootstrap';
 import Pagination from "react-js-pagination";
 import '../Pagination.css';
+import { NavLink } from 'react-router-dom';
 
 const BookList = () => {
     const size = 5;
@@ -125,7 +126,8 @@ const BookList = () => {
                         <tr key={book.bid}>
                             <td>{book.bid}</td>
                             <td><img src={book.image || "http://via.placeholder.com/170x250"} width="30" /></td>
-                            <td width="30%"><div className='ellipsis'>{book.title}</div></td>
+                            <td width="30%"><div className='ellipsis'><NavLink to={`/books/read/${book.bid}`}>{book.title}</NavLink></div>
+                            </td>
                             <td width="20%"><div className='ellipsis'>{book.authors}</div></td>
                             <td>{book.fmtprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원</td>
                             <td>{book.fmtdate}</td>

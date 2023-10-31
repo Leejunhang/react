@@ -1,6 +1,34 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+var multer = require('multer');
+
+//사진 업로드
+var upload = multer({
+	storage: multer.diskStorage({
+		destination:(req, file, done)=>{
+			done(null, './public/upload/photo')
+		},
+		filename:(req, file, done)=> {
+			var fileName=Date.now() + '.jpg'
+			done(null, fileName);
+		}
+	})
+});
+
+//사진 업로드 라우터
+router.post('/update/photo',upload.single('file'), function(req, res){
+	const filename='/upload/photo/' + req.file.filename;
+	const uid=req.body.uid;
+	const sql='update users set photo=? where uid=?';
+	db.get().query(sql, [filename, uid], function(err){
+		if(err){
+			res.send('0');
+		}else{
+			res.send('1');
+		}
+	});
+});
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
