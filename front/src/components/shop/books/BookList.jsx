@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Spinner, Table, Row, Col, InputGroup, Form, Button } from 'react-bootstrap';
 import Pagination from "react-js-pagination";
 import '../Pagination.css';
-import { NavLink } from 'react-router-dom';
 
 const BookList = () => {
     const size = 5;
@@ -80,12 +79,11 @@ const BookList = () => {
             if(window.confirm(`${chcnt}권 도서를 삭제하실래요?`)) {
                 for(const book of books){
                     if(book.checked) {
-                        //도서삭제
                         const res=await axios.post('/books/delete', {bid: book.bid});
                         if(res.data === 1) count++;
                     }
-                };
-                alert(`${count}권 도서삭제!`);
+                }
+                alert(`${count}권 삭제되었습니다.`);
                 navi(`${path}?page=1&query=${query}&size=${size}`);
             }
         }
@@ -100,7 +98,7 @@ const BookList = () => {
                     <form onSubmit={onSubmit}>
                         <InputGroup>
                             <Form.Control value={query} onChange={(e)=>setQuery(e.target.value)}/>
-                            <Button type="submit">검색</Button>
+                            <Button>검색</Button>
                         </InputGroup>
                     </form>
                 </Col>
@@ -111,7 +109,7 @@ const BookList = () => {
                 </Col>
             </Row>
             <hr/>
-            <Table striped>
+            <Table striped hover>
                 <thead>
                     <tr>
                         <th>ID</th><th>이미지</th><td>제목</td>
@@ -126,10 +124,15 @@ const BookList = () => {
                         <tr key={book.bid}>
                             <td>{book.bid}</td>
                             <td><img src={book.image || "http://via.placeholder.com/170x250"} width="30" /></td>
-                            <td width="30%"><div className='ellipsis'><NavLink to={`/books/read/${book.bid}`}>{book.title}</NavLink></div>
+                            <td width="30%">
+                                <div className='ellipsis'>
+                                    <NavLink to={`/books/read/${book.bid}`}>{book.title}</NavLink>
+                                    <span>리뷰:{book.rcnt}</span>
+                                    <span>좋아요:{book.fcnt}</span>
+                                </div>
                             </td>
                             <td width="20%"><div className='ellipsis'>{book.authors}</div></td>
-                            <td>{book.fmtprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원</td>
+                            <td>{book.fmtprice}원</td>
                             <td>{book.fmtdate}</td>
                             <td><Button onClick={()=>onDelete(book.bid)}
                                 size='sm' variant='danger'>삭제</Button></td>

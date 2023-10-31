@@ -47,7 +47,7 @@ a {
 }
 
 .navbar-nav a {
-  color: #b4b5b2;
+  color: #d1cfcf;
 }
 
 .ellipsis {
@@ -61,4 +61,18 @@ a {
 .photo {
   border-radius: 50%;
   cursor: pointer;
+}
+
+.heart {
+  color: red;
+  cursor: pointer;
+}
+
+.rcnt, .fcnt {
+  color:gray;
+  font-size: 0.7rem;
+}
+
+.message {
+  color: gray;
 }

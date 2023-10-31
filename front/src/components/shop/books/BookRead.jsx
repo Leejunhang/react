@@ -40,22 +40,21 @@ const BookRead = () => {
             ...book,
             image: URL.createObjectURL(e.target.files[0]),
             file:e.target.files[0]
-        });
-
-    };
+        })
+    }
 
     const onUpdateImage = async() => {
         if(!file) {
-            alert("변경할 이미지를 선택해 주세요!");
-        }else {
-            if(window.confirm("이미지를 변경 하시겠습니까?")) {
-                //이미지 변경
+            alert("변경할 이미지를 선택하세요!");
+        }else{
+            if(window.confirm("이미지를 변경하실래요?")) {
+                //이미지변경
                 const formData=new FormData();
                 formData.append("file", file);
                 formData.append("bid", bid);
                 const res= await axios.post('/books/update/image', formData);
-                if(res.datga===0){
-                    alert("이미지 변경 실패!");
+                if(res.data===0) {
+                    alert("이미지 변경실패!");
                 }else{
                     alert("이미지 변경 성공!");
                     getBook();
@@ -63,26 +62,27 @@ const BookRead = () => {
             }
         }
     }
+
     if(loading) return <div className='text-center my-5'><Spinner variant='primary'/></div>
     return (
         <div className='my-5'>
             <h1 className='text-center mb-5'>도서 정보</h1>
             <Row className='justify-content-center'>
-                <Col md={6}>
+                <Col md={10}>
                     <Card className='p-3'>
                         <Row>
-                            <Col md={3}>
+                            <Col col={2} className='mb-5'>
                                 <div className='mt-1'>
-                                    <img onClick={()=>ref_file.current.click()}
+                                    <img onClick={()=>ref_file.current.click()} 
                                         src={image || "http://via.placeholder.com/170x250"}
-                                        width="100%" className='bookPhoto' />
-                                    <input ref={ref_file} 
-                                        type="file" onChange={onChangeFile} style={{displat:'none'}}/>
+                                        width="100%" className='bookPhoto'/>
+                                    <input ref={ref_file}
+                                        type="file" onChange={onChangeFile} style={{display:'none'}}/>    
                                 </div>
-                                <Button onClick={onUpdateImage} 
-                                    size='sm mt-2 w-100' variant='success'>이미지 수정</Button>
+                                <Button onClick={onUpdateImage} height="100%"
+                                    size='sm mt-2 w-100' variant='success'>이미지 수정</Button>  
                             </Col>
-                            <Col className='px-3 align-self-center'>
+                            <Col col={10} className='px-3 align-self-center'>
                                 <h3>{title}</h3>
                                 <hr/>
                                 <div>저자 : {authors}</div>
