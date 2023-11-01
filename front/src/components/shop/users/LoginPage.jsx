@@ -1,12 +1,11 @@
 import axios from 'axios';
-import React, { useRef, useState } from 'react';
-import {Row, Col, Form, InputGroup, Button, Card} from 'react-bootstrap';
+import React, { useRef, useState } from 'react'
+import {Row, Col, Form, InputGroup, Button, Card} from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+    const navi=useNavigate();
     const ref_uid = useRef(null);
-    const ref_upass = useRef(null);
-    const navigator = useNavigate();
     const [form, setForm] = useState({
         uid: 'blue',
         upass: 'pass'
@@ -14,11 +13,10 @@ const LoginPage = () => {
     const {uid, upass} = form;
     const onChange = (e) => {
         setForm({
-        ...form,
-        [e.target.name]:e.target.value
+            ...form,
+            [e.target.name]:e.target.value
         })
     }
-
     const onSubmit = async(e) => {
         e.preventDefault();
         if(uid==="") {
@@ -26,21 +24,21 @@ const LoginPage = () => {
             ref_uid.current.focus();
         }else if(upass===""){
             alert("비밀번호를 입력하세요!");
-            ref_upass.current.focus();
         }else{
             const res=await axios.post('/users/login', form);
-            console.log(res);
             if(res.data==0){
                 alert("아이디가 존재하지 않습니다!");
                 ref_uid.current.focus();
             }else if(res.data==2){
-                alert("비밀번호가 일치하지 않습니다!");
-                ref_upass.current.focus();
-            }else {
-                alert("로그인 성공");
-               sessionStorage.setItem("uid", uid);
-                navigator('/');
-            }    
+                alert("비빌번호가 일치하지 않습니다!");
+            }else{
+                sessionStorage.setItem("uid", uid);
+                if(sessionStorage.getItem("target")){
+                    navi(sessionStorage.getItem("target"));
+                }else{
+                    navi('/');
+                }
+            }
         }
     }
 
@@ -50,7 +48,7 @@ const LoginPage = () => {
             <Row className='justify-content-center'>
                 <Col md={6} className='mx-3'>
                     <Card className='p-3'>
-                        <form onSubmit={onSubmit}> 
+                        <form onSubmit={onSubmit}>
                             <InputGroup className='mb-2'>
                                 <InputGroup.Text>아이디</InputGroup.Text>
                                 <Form.Control onChange={onChange} ref={ref_uid}
@@ -58,7 +56,7 @@ const LoginPage = () => {
                             </InputGroup>
                             <InputGroup className='mb-2'>
                                 <InputGroup.Text>비밀번호</InputGroup.Text>
-                                <Form.Control onChange={onChange} ref={ref_upass}
+                                <Form.Control onChange={onChange}
                                     type="password" value={upass} name='upass'/>
                             </InputGroup>
                             <Button className='w-100' type="submit">로그인</Button>

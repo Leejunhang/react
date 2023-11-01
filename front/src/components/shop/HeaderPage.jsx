@@ -5,14 +5,14 @@ import {NavLink, useNavigate} from 'react-router-dom'
 
 const HeaderPage = () => {
     const navi = useNavigate();
-    const onLogout = (e) => {
+    const onLogout = (e)=> {
         e.preventDefault();
-        if(window.confirm("로그아웃 하실래요?")) {
+        if(window.confirm("로그아웃하실래요?")) {
             sessionStorage.clear();
             navi("/");
-
         }
     }
+
     return (
         <Navbar expand="lg" bg="primary" data-bs-theme="dark">
             <Container fluid>
@@ -33,10 +33,10 @@ const HeaderPage = () => {
                             :
                             <>
                                 <NavLink to="/users/mypage">{sessionStorage.getItem("uid")}</NavLink>
-                                <NavLink onClick={onLogout} 
+                                <NavLink onClick={onLogout}
                                     to="/users/login">로그아웃</NavLink>
-                            </>
-                        }   
+                            </>    
+                        }
                     </Nav>
                 </Navbar.Collapse>
             </Container>

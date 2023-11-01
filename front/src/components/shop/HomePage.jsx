@@ -5,7 +5,7 @@ import {BsHeartFill, BsHeart} from 'react-icons/bs'
 import {BiMessageDetail} from 'react-icons/bi'
 import Pagination from "react-js-pagination";
 import './Pagination.css';
-import {useNavigate, useLocation} from 'react-router-dom'
+import {useNavigate, useLocation, NavLink} from 'react-router-dom'
 
 const HomePage = () => {
     const [books, setBooks] = useState([]);
@@ -42,6 +42,20 @@ const HomePage = () => {
         navi(`${path}?query=${query}&page=${page}`);
     }
 
+    const onClickHeart = async(bid) =>{
+        if(sessionStorage.getItem("uid")){
+            await axios.post('/books/insert/favorite', 
+                {uid:sessionStorage.getItem("uid"), bid: bid});
+            getBooks();
+        }else{
+            navi('/users/login');
+        }
+    }
+    const onClickFillHeart = async(bid) => {
+        await axios.post('/books/delete/favorite', 
+                {uid:sessionStorage.getItem("uid"), bid: bid});
+            getBooks();
+    }
     if(loading) return <div className='my-5 text-center'><Spinner variant='primary'/></div>
     return (
         <div className='my-5'>
@@ -59,10 +73,12 @@ const HomePage = () => {
             </Row>
             <Row>
                 {books.map(book=>
-                    <Col xs={6} md={4} lg={2} className='mb-3'>
+                    <Col xs={6} md={4} lg={2} className='mb-3' key={book.bid}>
                         <Card>
                             <Card.Body>
-                                <img src={book.image || "http://via.placeholder.com/170x250"} width="100%"/>
+                                <NavLink to={`/books/info/${book.bid}`}>
+                                    <img src={book.image || "http://via.placeholder.com/170x250"} width="100%"/>
+                                </NavLink>
                                 <small className='ellipsis mt-2'>{book.title}</small>
                             </Card.Body>
                             <Card.Footer className="text-end">
@@ -73,7 +89,10 @@ const HomePage = () => {
                                     </span>
                                 }
                                 <span className='ms-3'>
-                                    <span className='heart'>{book.ucnt === 0 ? <BsHeart/>:<BsHeartFill/>}</span>
+                                    <span className='heart'>{book.ucnt === 0 ? 
+                                        <BsHeart onClick={()=>onClickHeart(book.bid)}/>
+                                        :
+                                        <BsHeartFill onClick={()=>onClickFillHeart(book.bid)}/>}</span>
                                     <span className='ms-1 fcnt'>{book.fcnt}</span>
                                 </span>
                             </Card.Footer>
