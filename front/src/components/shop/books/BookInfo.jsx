@@ -83,7 +83,7 @@ const BookInfo = () => {
                     </Col>
                 </Row>
             </Card>
-            {/*상세 설명/ 리뷰 탭*/}
+            {/*상세설명/ 리뷰 탭 */}
             <div className='my-5'>
                 <Tabs
                     defaultActiveKey="review"
@@ -91,10 +91,10 @@ const BookInfo = () => {
                     id="noanim-tab-example"
                     className="mb-3">
                     <Tab eventKey="home" title="상세설명">
-                        <div className='px-5'>{book.contents}</div>
+                        <div className='px-3'>{book.contents}</div>
                     </Tab>
                     <Tab eventKey="review" title="리뷰">
-                        <ReviewPage pathname={location.pathname}/>
+                        <ReviewPage location={location}/>
                     </Tab>
                 </Tabs>
             </div>

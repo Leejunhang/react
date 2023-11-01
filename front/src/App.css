@@ -76,3 +76,17 @@ a {
 .message {
   color: gray;
 }
+
+.ellipsis2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  cursor: pointer;
+}
+
+.uname {
+  font-size: 0.7 rem;
+  color : gray;
+}

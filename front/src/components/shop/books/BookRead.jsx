@@ -98,7 +98,7 @@ const BookRead = () => {
                                 <div>
                                     {fcnt} : {ucnt} : {rcnt}
                                 </div>
-                                <NavLink to={`/books/update/${bid}`}>
+                                <NavLink to={`/books/update/${bid}?uid=${sessionStorage.getItem("uid")}`}>
                                     <Button className='mt-2 px-5' size='sm '>정보수정</Button>
                                 </NavLink>
                             </Col>
