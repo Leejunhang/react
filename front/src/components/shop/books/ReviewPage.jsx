@@ -4,6 +4,7 @@ import {Button, Form, Row, Col} from 'react-bootstrap'
 import { useParams } from 'react-router-dom';
 import Pagination from "react-js-pagination";
 import '../Pagination.css';
+import ModalBox from '../ModalBox';
 
 const ReviewPage = ({location, setBook, book}) => {
     const [reviews, setReviews] = useState([]);
@@ -12,6 +13,11 @@ const ReviewPage = ({location, setBook, book}) => {
     const {bid} = useParams();
     const [total, setTotal] = useState(0);
     const [contents, setContents] =useState("");
+    const [box, setBox]=useState({
+            show:false,
+            message:'',
+            action:null
+    });
 
     const getReviews = async() => {
         const url=`/review/list.json?page=${page}&size=${size}&bid=${bid}`;
@@ -43,8 +49,7 @@ const ReviewPage = ({location, setBook, book}) => {
     }
 
     const onClickRegister = async() => {
-        if(contents==="") {
-            alert("리뷰 내용을 입력하세요!");
+        if(contents==="") {setBox({show:true, message:'내용을 입력해 주세요!'});
         }else{
             const res=await axios.post('/review/insert', {
                 uid:sessionStorage.getItem("uid"),
@@ -59,12 +64,24 @@ const ReviewPage = ({location, setBook, book}) => {
     }
 
     const onClickDelete = async(rid) => {
+        /*
         if(window.confirm(`${rid}번 리뷰를 삭제하시겠습니까?`)){
             const res=await axios.post('/review/delete', {rid:rid});
             if(res.data===1) {
                 getReviews();
             }
         }
+        */
+       setBox({
+            show:true,
+            message:`${rid}번 리뷰를 삭제 하시겠습니까?`,
+            action: async()=>{
+                const res=await axios.post('/review/delete', {rid:rid});
+                if(res.data===1) {
+                    getReviews();
+                }
+            }
+       })
     }
 
     const onClickUpdate = (rid) => {
@@ -72,9 +89,21 @@ const ReviewPage = ({location, setBook, book}) => {
         setReviews(list);
     }
 
-    const onClickCancel = (rid) => {
-        const list=reviews.map(r=>r.rid===rid ? {...r, edit:false, text:r.contents} : r);
-        setReviews(list);
+    const onClickCancel = (rid, text, contents) => {
+        if(text !== contents) {
+            //if(!window.confirm("정말 취소 하시겠습니까?")) return;
+            setBox({
+                show:true,
+                message:"정말로 취소하실래요?",
+                action: ()=> {
+                    const list=reviews.map(r=>r.rid===rid ? {...r, edit:false, text:r.contents} : r);
+                    setReviews(list);
+                }
+            })
+        }else{
+            const list=reviews.map(r=>r.rid===rid ? {...r, edit:false, text:r.contents} : r);
+            setReviews(list);
+        }
     }
 
     const onChange = (rid, e) =>{
@@ -84,12 +113,24 @@ const ReviewPage = ({location, setBook, book}) => {
 
     const onClickSave =async(rid, text, contents) => {
         if(text === contents) return;
+        /*
         if(window.confirm('수정 하시겠습니까?')){
             const res=await axios.post('/review/update', {rid, contents:text});
             if(res.data === 1) {
                 getReviews();
             }
         }
+        */
+       setBox({
+        show:true,
+        message:'정말로 저장하실래요?',
+        action:async () => {
+            const res=await axios.post("/review/update", {rid, contents:text});
+            if(res.data === 1) {
+                getReviews();
+            }
+        }
+       });
     }
 
     return (
@@ -136,7 +177,7 @@ const ReviewPage = ({location, setBook, book}) => {
                                 <div className='text-end'>
                                     <Button onClick={()=>onClickSave(review.rid, review.text, review.contents)}
                                          variant='success' size='sm me-2'>저장</Button>
-                                    <Button onClick={()=>onClickCancel(review.rid)}
+                                    <Button onClick={()=>onClickCancel(review.rid, review.text, review.contents)}
                                         variant='secondary' size='sm'>취소</Button>
                                 </div>
                             </>
@@ -154,6 +195,8 @@ const ReviewPage = ({location, setBook, book}) => {
                     nextPageText={"›"}
                     onChange={onChangePage}/>
             }
+
+            {box.show && <ModalBox box={box} setBox={setBox}/>}
         </div>
     )
 }
