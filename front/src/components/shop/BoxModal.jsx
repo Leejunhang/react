@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
+import { BoxContext } from './BoxContext';
 
-const ModalBox = ({box, setBox}) => { // show, message, action
+const BoxModal = () => {
+    const { box, setBox } = useContext(BoxContext);
     const onClose = () => {
         setBox({
             ...box,
@@ -22,10 +24,9 @@ const ModalBox = ({box, setBox}) => { // show, message, action
                 show={box.show}
                 onHide={onClose}
                 backdrop="static"
-                keyboard={false}
-            >
+                keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{box.action ? 'CONFIRM' : '알림'}</Modal.Title>
+                    <Modal.Title>{box.action ? '알림창' : '알림'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {box.message}
@@ -45,4 +46,4 @@ const ModalBox = ({box, setBox}) => { // show, message, action
     );
 }
 
-export default ModalBox
+export default BoxModal
